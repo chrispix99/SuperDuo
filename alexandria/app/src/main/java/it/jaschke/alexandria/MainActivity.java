@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private NavigationDrawerFragment navigationDrawerFragment;
+    protected NavigationDrawerFragment navigationDrawerFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
