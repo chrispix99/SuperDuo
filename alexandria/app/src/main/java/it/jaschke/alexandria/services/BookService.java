@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,8 +102,6 @@ public class BookService extends IntentService {
 
             final String ISBN_PARAM = "isbn:" + ean;
 
-            android.util.Log.e("CTP","URL:" + ISBN_PARAM);
-
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, ISBN_PARAM)
                     .build();
@@ -158,48 +157,50 @@ public class BookService extends IntentService {
         final String IMG_URL_PATH = "imageLinks";
         final String IMG_URL = "thumbnail";
 
-        try {
-            JSONObject bookJson = new JSONObject(bookJsonString);
-            JSONArray bookArray;
-            if(bookJson.has(ITEMS)){
-                bookArray = bookJson.getJSONArray(ITEMS);
-            }else{
-                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
-                return;
+        if (bookJsonString != null) {
+            try {
+                JSONObject bookJson = new JSONObject(bookJsonString);
+                JSONArray bookArray;
+                if (bookJson.has(ITEMS)) {
+                    bookArray = bookJson.getJSONArray(ITEMS);
+                } else {
+                    Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+                    messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.not_found));
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+                    return;
+                }
+
+                JSONObject bookInfo = ((JSONObject) bookArray.get(0)).getJSONObject(VOLUME_INFO);
+
+                String title = bookInfo.getString(TITLE);
+
+                String subtitle = "";
+                if (bookInfo.has(SUBTITLE)) {
+                    subtitle = bookInfo.getString(SUBTITLE);
+                }
+
+                String desc = "";
+                if (bookInfo.has(DESC)) {
+                    desc = bookInfo.getString(DESC);
+                }
+
+                String imgUrl = "";
+                if (bookInfo.has(IMG_URL_PATH) && bookInfo.getJSONObject(IMG_URL_PATH).has(IMG_URL)) {
+                    imgUrl = bookInfo.getJSONObject(IMG_URL_PATH).getString(IMG_URL);
+                }
+
+                writeBackBook(ean, title, subtitle, desc, imgUrl);
+
+                if (bookInfo.has(AUTHORS)) {
+                    writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));
+                }
+                if (bookInfo.has(CATEGORIES)) {
+                    writeBackCategories(ean, bookInfo.getJSONArray(CATEGORIES));
+                }
+
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Error ", e);
             }
-
-            JSONObject bookInfo = ((JSONObject) bookArray.get(0)).getJSONObject(VOLUME_INFO);
-
-            String title = bookInfo.getString(TITLE);
-
-            String subtitle = "";
-            if(bookInfo.has(SUBTITLE)) {
-                subtitle = bookInfo.getString(SUBTITLE);
-            }
-
-            String desc="";
-            if(bookInfo.has(DESC)){
-                desc = bookInfo.getString(DESC);
-            }
-
-            String imgUrl = "";
-            if(bookInfo.has(IMG_URL_PATH) && bookInfo.getJSONObject(IMG_URL_PATH).has(IMG_URL)) {
-                imgUrl = bookInfo.getJSONObject(IMG_URL_PATH).getString(IMG_URL);
-            }
-
-            writeBackBook(ean, title, subtitle, desc, imgUrl);
-
-            if(bookInfo.has(AUTHORS)) {
-                writeBackAuthors(ean, bookInfo.getJSONArray(AUTHORS));
-            }
-            if(bookInfo.has(CATEGORIES)){
-                writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
-            }
-
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error ", e);
         }
     }
 
