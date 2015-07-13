@@ -39,21 +39,26 @@ public class ScannerActivity extends ActionBarActivity implements ZBarScannerVie
 
     @Override
     public void handleResult(Result rawResult) {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(AddBook.SCAN_CONTENTS, rawResult.getContents());
-        resultIntent.putExtra(AddBook.SCAN_FORMAT, rawResult.getBarcodeFormat().getName());
-        setResult(Activity.RESULT_OK, resultIntent);
-        // Leaving this for debugging.
-//        Toast.makeText(this, "Contents = " + rawResult.getContents() +
-//                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
-        finish();
+        if (rawResult.getBarcodeFormat().getId() == BarcodeFormat.ISBN13.getId()) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(AddBook.SCAN_CONTENTS, rawResult.getContents());
+            resultIntent.putExtra(AddBook.SCAN_FORMAT, rawResult.getBarcodeFormat().getName());
+            setResult(Activity.RESULT_OK, resultIntent);
+            // Leaving this for debugging.
+//            android.util.Log.e("CTP","Contents = " + rawResult.getContents() +
+//                ", Format = " + rawResult.getBarcodeFormat().getName());
+
+            finish();
+        } else {
+            // TRY AGAIN
+            mScannerView.startCamera();
+        }
     }
 
     private void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
-        //formats.add(BarcodeFormat.ISBN10);
         formats.add(BarcodeFormat.ISBN13);
-        formats.add(BarcodeFormat.EAN13);
+        formats.add(BarcodeFormat.EAN13);   // For some reason ISBN13 won't work without EAN13 enabled
         if(mScannerView != null) {
             mScannerView.setFormats(formats);
         }

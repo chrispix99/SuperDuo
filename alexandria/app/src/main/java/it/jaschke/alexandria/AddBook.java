@@ -77,6 +77,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     ean="978"+ean;
                 }
                 if(ean.length()<13){
+                    //clearFields();
+                    return;
+                }
+                if (ean.length()==0) {
                     clearFields();
                     return;
                 }
