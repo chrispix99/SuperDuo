@@ -134,7 +134,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             case (RESULT_SCAN) : {
                 if (resultCode == Activity.RESULT_OK) {
                     mScanContents = data.getStringExtra(SCAN_CONTENTS);
-                    android.util.Log.e("CTP","Contents: "+ mScanContents);
                     mScanFormat = data.getStringExtra(SCAN_FORMAT);
                     ean.setText(mScanContents);
                 }

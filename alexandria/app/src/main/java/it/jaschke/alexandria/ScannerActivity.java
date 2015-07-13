@@ -43,11 +43,10 @@ public class ScannerActivity extends ActionBarActivity implements ZBarScannerVie
         resultIntent.putExtra(AddBook.SCAN_CONTENTS, rawResult.getContents());
         resultIntent.putExtra(AddBook.SCAN_FORMAT, rawResult.getBarcodeFormat().getName());
         setResult(Activity.RESULT_OK, resultIntent);
+        // Leaving this for debugging.
 //        Toast.makeText(this, "Contents = " + rawResult.getContents() +
 //                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
         finish();
-
-//        mScannerView.startCamera();
     }
 
     private void setupFormats() {
