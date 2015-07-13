@@ -101,6 +101,8 @@ public class BookService extends IntentService {
 
             final String ISBN_PARAM = "isbn:" + ean;
 
+            android.util.Log.e("CTP","URL:" + ISBN_PARAM);
+
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, ISBN_PARAM)
                     .build();
