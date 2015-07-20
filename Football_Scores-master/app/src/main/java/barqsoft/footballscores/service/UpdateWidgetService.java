@@ -86,7 +86,7 @@ public class UpdateWidgetService extends Service {
                 null
         );
 
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             views.setTextViewText(R.id.home_name, cursor.getString(COL_HOME));
             views.setTextViewText(R.id.away_name, cursor.getString(COL_AWAY));
@@ -94,6 +94,11 @@ public class UpdateWidgetService extends Service {
             views.setTextViewText(R.id.score, Utilies.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
 
             cursor.close();
+        } else {
+            views.setTextViewText(R.id.home_name, "");
+            views.setTextViewText(R.id.away_name, "");
+            views.setTextViewText(R.id.date, getString(R.string.no_games_today));
+            views.setTextViewText(R.id.score, "");
         }
 
 

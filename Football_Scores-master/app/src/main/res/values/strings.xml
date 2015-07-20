@@ -44,4 +44,5 @@
     <string name="away_team_crest">away team crest</string>
     <string name="away_team_name">away team name</string>
     <string name="dash">vs.</string>
+    <string name="no_games_today">No Games Today</string>
 </resources>
