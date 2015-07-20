@@ -32,12 +32,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private final int RESULT_SCAN = 100;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
+    private final String LAST_EAN_CONTENT="lastEanContent";
     public static final String SCAN_FORMAT = "scanFormat";
     public static final String SCAN_CONTENTS = "scanContents";
 
 
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
+    private String lastValidEan;
 
 
 
@@ -50,13 +52,26 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if(ean!=null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
         }
+
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // Moving this here for screen rotation
+        getActivity().setTitle(R.string.scan);
+
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
+
+        // moved this up here so the text change listener does not trigger.
+        if(savedInstanceState!=null){
+            clearFields();
+            if (savedInstanceState.containsKey(EAN_CONTENT)) {
+                ean.setText(savedInstanceState.getString(EAN_CONTENT));
+                ean.setHint("");
+            }
+        }
 
         ean.addTextChangedListener(new TextWatcher() {
             @Override
@@ -120,10 +135,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
-        if(savedInstanceState!=null){
-            ean.setText(savedInstanceState.getString(EAN_CONTENT));
-            ean.setHint("");
-        }
 
         return rootView;
     }
@@ -179,9 +190,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        // while testing noticed a crash here, because authors was null
+        if (authors != null) {
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
+        }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
             // Replaced image loader with Picasso
@@ -214,6 +228,5 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        activity.setTitle(R.string.scan);
     }
 }
