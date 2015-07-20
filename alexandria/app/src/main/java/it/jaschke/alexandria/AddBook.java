@@ -66,7 +66,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         // moved this up here so the text change listener does not trigger.
         if(savedInstanceState!=null){
-            clearFields();
             if (savedInstanceState.containsKey(EAN_CONTENT)) {
                 ean.setText(savedInstanceState.getString(EAN_CONTENT));
                 ean.setHint("");
@@ -96,7 +95,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     return;
                 }
                 if(ean.length()<13){
-                    //clearFields();
                     return;
                 }
                 //Once we have an ISBN, start a book intent
@@ -137,6 +135,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (ean != null && ean.getText().length() > 0) {
+            clearFields();
+        }
     }
 
     private void restartLoader(){
