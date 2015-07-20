@@ -1,17 +1,9 @@
 package barqsoft.footballscores;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.widget.RemoteViews;
-import barqsoft.footballscores.service.MyFetchService;
 import barqsoft.footballscores.service.UpdateWidgetService;
 
 /**
